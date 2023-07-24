@@ -1,17 +1,35 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Provider } from "react-redux";
+import "./index.css";
+import Header from "./component/Header";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import ProceedToPay from "./pages/ProceedToPay";
+import PageNotFound from "./pages/PageNotFound";
+import Cart from "./pages/Cart";
+import store from "./redux/appStore";
+import { ProtectedRoute } from "./component/ProtectedRoute";
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore } from 'redux-persist';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+let persistor = persistStore(store);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+    <Router>
+      <Header />
+      <Routes>
+        <Route exact path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}></Route>
+        <Route exact path="/login" element={<Login />}></Route>
+        <Route exact path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>}></Route>
+        <Route exact path="/thanks" element={<ProtectedRoute><ProceedToPay /></ProtectedRoute>}></Route>
+        <Route exact path="*" element={<PageNotFound />}></Route>
+      </Routes>
+    </Router>
+    </PersistGate>
+  </Provider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
